@@ -1,0 +1,120 @@
+@startuml
+skinparam linetype ortho
+skinparam nodesep 80
+skinparam ranksep 100
+
+skinparam entity {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  FontSize 12
+  FontName Arial
+}
+
+skinparam arrow {
+  Color #000000
+  FontSize 11
+  FontName Arial
+}
+
+' =====================
+' ENTITÉS
+' =====================
+
+entity "USERS" as USER {
+  <u>id_user</u> : INT
+  --
+  nom : VARCHAR(50)
+  prenom : VARCHAR(50)
+  email : VARCHAR(100)
+  mot_de_passe : VARCHAR(255)
+  role : ENUM('admin','operateur','consultation')
+  date_creation : DATETIME
+}
+
+entity "CAPTEURS" as CAPTEUR {
+  <u>id_capteur</u> : INT
+  --
+  nom : VARCHAR(50)
+  type : ENUM('humidite_sol','temperature',
+  'luminosite','co2','niveau_eau')
+  unite_mesure : VARCHAR(20)
+  statut : BOOLEAN
+}
+
+entity "MESURES" as MESURE {
+  <u>id_mesure</u> : INT
+  --
+  valeur : FLOAT
+  horodatage : DATETIME
+  id_capteur : INT <<FK>>
+}
+
+entity "ACTIONNEURS" as ACTIONNEUR {
+  <u>id_actionneur</u> : INT
+  --
+  nom : VARCHAR(50)
+  type : ENUM('pompe','ventilateur','led')
+  statut : BOOLEAN
+}
+
+entity "ACTIONS" as ACTION {
+  <u>id_action</u> : INT
+  --
+  commande : ENUM('ON','OFF')
+  type_declenchement : ENUM('manuel','automatique')
+  date_heure : DATETIME
+  id_actionneur : INT <<FK>>
+  id_user : INT <<FK>>
+}
+
+entity "SEUILS" as SEUIL {
+  <u>id_seuil</u> : INT
+  --
+  valeur_min : FLOAT
+  valeur_max : FLOAT
+  date_modification : DATETIME
+  id_capteur : INT <<FK>>
+  id_user : INT <<FK>>
+}
+
+entity "ALERTES" as ALERTE {
+  <u>id_alerte</u> : INT
+  --
+  message : VARCHAR(255)
+  niveau : ENUM('info','warning','critique')
+  date_heure : DATETIME
+  acquittee : BOOLEAN
+  id_capteur : INT <<FK>>
+  id_user : INT <<FK>>
+}
+
+entity "AUDIT" as AUDIT {
+  <u>id_audit</u> : INT
+  --
+  action : VARCHAR(100)
+  table_concernee : VARCHAR(50)
+  ancienne_valeur : TEXT
+  nouvelle_valeur : TEXT
+  date_heure : DATETIME
+  adresse_ip : VARCHAR(45)
+  id_user : INT <<FK>>
+}
+
+' =====================
+' RELATIONS (Crow's Foot)
+' =====================
+
+USER ||--o{ ACTION : "effectue"
+USER ||--o{ ALERTE : "reçoit"
+USER ||--o{ SEUIL : "configure"
+USER ||--o{ AUDIT : "génère"
+
+CAPTEUR ||--o{ MESURE : "génère"
+CAPTEUR ||--o{ ALERTE : "déclenche"
+CAPTEUR ||--o{ SEUIL : "définit"
+
+ACTIONNEUR ||--o{ ACTION : "enregistre"
+
+SEUIL }o--o{ ALERTE : "provoque"
+
+@enduml

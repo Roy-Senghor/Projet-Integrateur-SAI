@@ -11,22 +11,22 @@ router = APIRouter(prefix="/alertes", tags=["Alertes"])
  
 @router.get("/", response_model=List[AlerteOut])
 def lister_alertes(
-    non_resolues: bool = True,
+    non_acquittees: bool = True,
     db: Session = Depends(get_db),
-    _user=Depends(get_current_user),
+    _=Depends(get_current_user),
 ):
     q = db.query(Alerte)
-    if non_resolues:
-        q = q.filter(Alerte.resolue == False)
-    return q.order_by(Alerte.timestamp.desc()).all()
+    if non_acquittees:
+        q = q.filter(Alerte.acquittee == False)
+    return q.order_by(Alerte.date_heure.desc()).all()
  
  
-@router.patch("/{alerte_id}/resoudre", response_model=AlerteOut)
-def resoudre_alerte(alerte_id: int, db: Session = Depends(get_db), _user=Depends(get_current_user)):
-    alerte = db.query(Alerte).filter(Alerte.id == alerte_id).first()
+@router.patch("/{id}/acquitter", response_model=AlerteOut)
+def acquitter_alerte(id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    alerte = db.query(Alerte).filter(Alerte.id == id).first()
     if not alerte:
         raise HTTPException(status_code=404, detail="Alerte introuvable")
-    alerte.resolue = True
+    alerte.acquittee = True
     db.commit()
     db.refresh(alerte)
     return alerte

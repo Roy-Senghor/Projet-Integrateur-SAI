@@ -17,10 +17,9 @@ class ConnectionManager:
         self.active.remove(ws)
  
     async def broadcast(self, data: dict):
-        message = json.dumps(data)
         for ws in self.active:
             try:
-                await ws.send_text(message)
+                await ws.send_text(json.dumps(data))
             except Exception:
                 pass
  
