@@ -5,7 +5,7 @@ import Login from './pages/LoginPage.jsx';
 import Actionneurs from './pages/Actionneurs.jsx';
 import Seuils from './pages/Seuils.jsx';
 import Sidebar from './components/Sidebar.jsx';
-import './styles/dashboard.css';
+import { LanguageProvider } from './context/LanguageContext.jsx';
 
 function App() {
   const location = useLocation();
@@ -30,8 +30,19 @@ function App() {
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const closeSidebar = () => setSidebarOpen(false);
 
+  // Fermer la sidebar si on repasse en mode bureau
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 900) {
+        setSidebarOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
-    <>
+    <LanguageProvider>
       {showSidebar && (
         <>
           <button className="menu-toggle" onClick={toggleSidebar}>
@@ -53,7 +64,7 @@ function App() {
           <Route path="/seuils" element={isAuth ? <Seuils /> : <Navigate to="/" />} />
         </Routes>
       </div>
-    </>
+    </LanguageProvider>
   );
 }
 export default App;

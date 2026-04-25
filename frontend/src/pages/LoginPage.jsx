@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import api from '../services/api'
+import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 
 const Login = ({ onLogin }) => {
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -25,7 +27,7 @@ const Login = ({ onLogin }) => {
       onLogin()
     }
     catch (err) {
-      setError(err.response?.data?.detail || "Erreur de connexion")
+      setError(err.response?.data?.detail || (t('loginError') || "Erreur de connexion"))
     }
     finally {
       setLoading(false)
@@ -40,15 +42,15 @@ const Login = ({ onLogin }) => {
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" /><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" /></svg>
           </div>
           <h2>AgroSmart</h2>
-          <span>Portail de gestion agricole</span>
+          <span>{t('loginPortal')}</span>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <label>Email professionnel</label>
+            <label>{t('email')}</label>
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="admin@agrosmart.com" required />
           </div>
           <div className="input-group">
-            <label>Mot de passe</label>
+            <label>{t('password')}</label>
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••" required />
           </div>
           {error && (
@@ -60,7 +62,7 @@ const Login = ({ onLogin }) => {
               {error}
             </div>
           )}
-          <button type="submit" className="login-btn" > {loading ? 'Connexion...' : 'Se connecter'}</button>
+          <button type="submit" className="login-btn" > {loading ? (t('loading') || '...') : t('login')}</button>
           <div className="login-demo">
             <p>Email : <br /> admin@agriculture.local</p>
             <p>Mdp : <br /> Admin1234!</p>
