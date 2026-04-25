@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useUser } from '../context/UserContext';
+import { Eye, EyeOff } from 'lucide-react';
 
 const Login = ({ onLogin }) => {
   const { t } = useLanguage();
   const { login } = useUser();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -51,7 +54,23 @@ const Login = ({ onLogin }) => {
           </div>
           <div className="input-group">
             <label>{t('password')}</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••" required />
+            <div className="password-wrapper">
+              <input 
+                type={showPassword ? "text" : "password"} 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                placeholder="••••••" 
+                required 
+              />
+              <button 
+                type="button" 
+                className="toggle-password" 
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex="-1"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
           {error && (
             <div style={{
@@ -138,6 +157,32 @@ const Login = ({ onLogin }) => {
           outline: none;
           border-color: #2b7e3b;
           box-shadow: 0 0 0 3px rgba(43,126,59,0.2);
+        }
+        .password-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+        .password-wrapper input {
+          padding-right: 45px;
+        }
+        .toggle-password {
+          position: absolute;
+          right: 12px;
+          background: none;
+          border: none;
+          color: #5b7c5a;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 4px;
+          border-radius: 8px;
+          transition: all 0.2s;
+        }
+        .toggle-password:hover {
+          color: #2b7e3b;
+          background: rgba(43,126,59,0.05);
         }
         .login-btn {
           width: 100%;
