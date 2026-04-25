@@ -5,27 +5,17 @@ import Login from './pages/LoginPage.jsx';
 import Actionneurs from './pages/Actionneurs.jsx';
 import Seuils from './pages/Seuils.jsx';
 import Sidebar from './components/Sidebar.jsx';
-import { LanguageProvider } from './context/LanguageContext.jsx';
+import { useUser } from './context/UserContext.jsx';
 
 function App() {
   const location = useLocation();
-  const navigate = useNavigate();
+  const { user, loading } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const [isAuth, setIsAuth] = useState(!!localStorage.getItem("token"))
-
-  const handleLogin = () => {
-    setIsAuth(true)
-    navigate('/dashboard')
-  }
-  const handleLogout = () => {
-    localStorage.removeItem("token")
-    setIsAuth(false)
-    navigate('/')
-  }
-
   // Détermine si la sidebar doit s'afficher
-  const showSidebar = isAuth && location.pathname !== "/"
+  // Si on est authentifié (user existe) et qu'on n'est pas sur la page de login
+  const isAuth = !!user;
+  const showSidebar = isAuth && location.pathname !== "/";
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const closeSidebar = () => setSidebarOpen(false);
@@ -41,8 +31,16 @@ function App() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', background: '#f8fafc' }}>
+        <div className="spinner">Chargement...</div>
+      </div>
+    );
+  }
+
   return (
-    <LanguageProvider>
+    <>
       {showSidebar && (
         <>
           <button className="menu-toggle" onClick={toggleSidebar}>
@@ -58,13 +56,13 @@ function App() {
       )}
       <div className={`app-content ${showSidebar ? "main-wrapper" : "auth-wrapper"}`}>
         <Routes>
-          <Route path="/" element={isAuth ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />} />
-          <Route path="/dashboard" element={isAuth ? <Dashboard onLogout={handleLogout} /> : <Navigate to="/" />} />
+          <Route path="/" element={isAuth ? <Navigate to="/dashboard" /> : <Login onLogin={() => {}} />} />
+          <Route path="/dashboard" element={isAuth ? <Dashboard /> : <Navigate to="/" />} />
           <Route path="/actionneurs" element={isAuth ? <Actionneurs /> : <Navigate to="/" />} />
           <Route path="/seuils" element={isAuth ? <Seuils /> : <Navigate to="/" />} />
         </Routes>
       </div>
-    </LanguageProvider>
+    </>
   );
 }
 export default App;

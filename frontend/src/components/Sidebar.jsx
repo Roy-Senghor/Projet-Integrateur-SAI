@@ -2,9 +2,18 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Power, SlidersHorizontal, History, Settings, Languages } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useUser } from '../context/UserContext';
 
 const Sidebar = ({ isOpen, onClose }) => {
   const { lang, setLang, t } = useLanguage();
+  const { user, logout } = useUser();
+
+  const getInitials = (name) => {
+    if (!name) return '??';
+    const parts = name.split(' ');
+    if (parts.length >= 2) return parts[0][0] + parts[1][0];
+    return name.slice(0, 2).toUpperCase();
+  };
 
   return (
     <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
@@ -51,10 +60,13 @@ const Sidebar = ({ isOpen, onClose }) => {
         </button>
 
         <div className="user-card">
-          <div className="avatar">AD</div>
-          <div><div className="user-name">Admin</div><div className="user-role">System</div></div>
+          <div className="avatar">{getInitials(user?.nom)}</div>
+          <div>
+            <div className="user-name">{user?.nom || 'Chargement...'}</div>
+            <div className="user-role">{user?.role || '...'}</div>
+          </div>
         </div>
-        <button className="logout-btn" onClick={() => { localStorage.removeItem('token'); window.location.href = '/'; }}>
+        <button className="logout-btn" onClick={logout}>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
           {t('logout')}
         </button>

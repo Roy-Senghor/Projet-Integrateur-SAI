@@ -204,7 +204,7 @@ const Dashboard = () => {
             <div className="chart-header">
               <div className="section-title"><Activity size={20} color="#2b7e3b" /> {t('trends24h')}</div>
               <div className="chart-tabs">
-                {['temperature', 'humidite', 'luminosite', 'co2'].map((type) => {
+                {['temperature', 'humidite', 'luminosite', 'co2',].map((type) => {
                   const Icon = chartData[type].icon;
                   const labelKey = chartData[type].labelKey;
                   return (

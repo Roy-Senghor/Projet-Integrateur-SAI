@@ -416,9 +416,9 @@ body {
 
 .sensors-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
-  margin-bottom: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
 }
 
 .sensor-card {
@@ -426,8 +426,8 @@ body {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg);
-  padding: 28px;
+  border-radius: 20px;
+  padding: 18px;
   box-shadow: var(--glass-shadow);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
@@ -455,17 +455,17 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 
 .sensor-icon-wrap {
-  width: 56px;
-  height: 56px;
-  border-radius: 18px;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   transition: transform 0.3s ease;
 }
 
@@ -496,7 +496,7 @@ body {
 }
 
 .sensor-value {
-  font-size: 2.4rem;
+  font-size: 1.6rem;
   font-weight: 700;
   font-family: 'JetBrains Mono', monospace;
   letter-spacing: -1px;
@@ -506,7 +506,7 @@ body {
 }
 
 .sensor-unit {
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: var(--text-muted);
 }

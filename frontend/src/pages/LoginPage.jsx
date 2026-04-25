@@ -5,6 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 
 const Login = ({ onLogin }) => {
   const { t } = useLanguage();
+  const { login } = useUser();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -23,8 +24,7 @@ const Login = ({ onLogin }) => {
 
       const { data } = await api.post('/auth/login', formData)
 
-      localStorage.setItem('token', data.access_token)
-      onLogin()
+      await login(data.access_token)
     }
     catch (err) {
       setError(err.response?.data?.detail || (t('loginError') || "Erreur de connexion"))
