@@ -22,12 +22,12 @@ const Dashboard = () => {
   const { lang, t } = useLanguage();
 
   const [sensors, setSensors] = useState([
-    { id: 1, nameKey: 'tempAir', unit: '°C', value: 24.5, threshold: { min: 15, max: 32 }, status: 'ok', icon: '🌡️', lucide: Thermometer, color: '#ff6b6b', bg: '#fff0f0' },
-    { id: 2, nameKey: 'humSoil', unit: '%', value: 45, threshold: { min: 40, max: 70 }, status: 'ok', icon: '💧', lucide: Droplets, color: '#4dabf7', bg: '#e7f5ff' },
-    { id: 3, nameKey: 'lux', unit: 'lux', value: 720, threshold: { min: 500, max: 1200 }, status: 'ok', icon: '☀️', lucide: Sun, color: '#fcc419', bg: '#fff9db' },
-    { id: 4, nameKey: 'humAir', unit: '%', value: 62, threshold: { min: 40, max: 80 }, status: 'ok', icon: '💨', lucide: Wind, color: '#63e6be', bg: '#e6fcf5' },
-    { id: 5, nameKey: 'co2', unit: 'ppm', value: 1520, threshold: { min: 400, max: 1500 }, status: 'warning', icon: '🫧', lucide: Gauge, color: '#ff922b', bg: '#fff4e6' },
-    { id: 6, nameKey: 'waterRes', unit: '%', value: 68, threshold: { min: 20, max: 100 }, status: 'ok', icon: '💦', lucide: Activity, color: '#2b8a3e', bg: '#ebfbee' },
+    { id: 1, nameKey: 'tempAir', unit: '°C', value: 24.5, threshold: { min: 15, max: 32 }, status: 'ok', icon: '', lucide: Thermometer, color: '#ff6b6b', bg: '#fff0f0' },
+    { id: 2, nameKey: 'humSoil', unit: '%', value: 45, threshold: { min: 40, max: 70 }, status: 'ok', icon: '', lucide: Droplets, color: '#4dabf7', bg: '#e7f5ff' },
+    { id: 3, nameKey: 'lux', unit: 'lux', value: 720, threshold: { min: 500, max: 1200 }, status: 'ok', icon: '', lucide: Sun, color: '#fcc419', bg: '#fff9db' },
+    { id: 4, nameKey: 'humAir', unit: '%', value: 62, threshold: { min: 40, max: 80 }, status: 'ok', icon: '', lucide: Wind, color: '#63e6be', bg: '#e6fcf5' },
+    { id: 5, nameKey: 'co2', unit: 'ppm', value: 1520, threshold: { min: 400, max: 1500 }, status: 'warning', icon: '', lucide: Gauge, color: '#ff922b', bg: '#fff4e6' },
+    { id: 6, nameKey: 'waterRes', unit: '%', value: 68, threshold: { min: 20, max: 100 }, status: 'ok', icon: '', lucide: Activity, color: '#2b8a3e', bg: '#ebfbee' },
   ]);
 
   const [activeChart, setActiveChart] = useState('temperature');
@@ -156,7 +156,7 @@ const Dashboard = () => {
       <div className="topbar">
         <h1>{t('dashboard')}</h1>
         <div className="topbar-time">
-          <span className="live-dot"></span>
+
           <span>{currentTime.toLocaleTimeString(lang === 'fr' ? 'fr-FR' : 'en-US')}</span>
         </div>
       </div>
