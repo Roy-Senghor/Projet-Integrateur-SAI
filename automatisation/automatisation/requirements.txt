@@ -1,0 +1,14 @@
+# Application d'Automatisation — Dépendances Python
+# Installer avec : pip install -r requirements.txt
+
+# Communication MQTT avec l'ESP32
+paho-mqtt==1.6.1
+
+# Requêtes HTTP vers l'API backend
+requests==2.31.0
+
+# Base de données MySQL (optionnel)
+# mysql-connector-python==8.2.0
+
+# Base de données PostgreSQL (optionnel)
+# psycopg2-binary==2.9.9

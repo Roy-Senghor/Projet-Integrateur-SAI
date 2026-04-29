@@ -1,0 +1,6 @@
+[2026-04-25 13:16:02] [INFO    ] === Démarrage de l'Application d'Automatisation ===
+[2026-04-25 13:16:53] [WARNING ] Échec MQTT (pompe): [WinError 10061] Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée
+[2026-04-25 13:16:57] [WARNING ] Échec HTTP (pompe): HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/actionneurs/pompe (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001B18E052270>: Failed to establish a new connection: [WinError 10061] Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée'))
+[2026-04-25 13:16:57] [WARNING ] [SIMULATION] Actionneur pompe → ON
+[2026-04-25 13:16:57] [INFO    ] Actionneur pompe → ON
+[2026-04-25 13:40:44] [INFO    ] === Arrêt de l'Application d'Automatisation ===
