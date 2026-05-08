@@ -9,6 +9,34 @@ from tkinter import font
 import threading
 import time
 import datetime
+import urllib.request
+import json
+
+API_URL = "http://localhost:8000"
+
+def api_get(endpoint):
+    try:
+        req = urllib.request.Request(f"{API_URL}{endpoint}")
+        with urllib.request.urlopen(req, timeout=3) as response:
+            return json.loads(response.read().decode())
+    except Exception as e:
+        return None
+
+def api_patch(endpoint):
+    try:
+        req = urllib.request.Request(f"{API_URL}{endpoint}", method="PATCH")
+        with urllib.request.urlopen(req, timeout=3) as response:
+            return json.loads(response.read().decode())
+    except Exception as e:
+        return None
+
+def api_post(endpoint, data):
+    try:
+        req = urllib.request.Request(f"{API_URL}{endpoint}", method="POST", data=json.dumps(data).encode(), headers={'Content-Type': 'application/json'})
+        with urllib.request.urlopen(req, timeout=3) as response:
+            return json.loads(response.read().decode())
+    except Exception as e:
+        return None
 
 # ── Couleurs ──────────────────────────────────────────────────────────
 BG        = "#0d1a0d"
@@ -37,16 +65,19 @@ def get_commands():
             ("│", "muted"),
             ("│  help          Afficher cette aide", "white"),
             ("│  clear         Effacer l'écran", "white"),
-            ("│  about         À propos d'AgriSmart", "white"),
-            ("│  status        État du système et des capteurs", "white"),
-            ("│  meteo         Météo agricole en temps réel", "white"),
-            ("│  cultures      Liste des cultures disponibles", "white"),
-            ("│  sol           Analyse des données de sol", "white"),
-            ("│  alerte        Alertes phytosanitaires actives", "white"),
-            ("│  recolte       Prévisions de récolte", "white"),
-            ("│  capteurs      État des capteurs terrain", "white"),
+            ("│  status        État de la connexion au backend", "white"),
+            ("│  capteurs      Dernières mesures des capteurs (Temps réel)", "white"),
+            ("│  alerte        Alertes actives du système (Temps réel)", "white"),
+            ("│  actionneurs   État des actionneurs (Temps réel)", "white"),
+            ("│  on <nom>      Allumer un actionneur (ex: on pompe)", "white"),
+            ("│  off <nom>     Éteindre un actionneur (ex: off pompe)", "white"),
+            ("│", "muted"),
+            ("│  meteo         Météo agricole (Simulation)", "white"),
+            ("│  cultures      Liste des cultures (Simulation)", "white"),
+            ("│  sol           Analyse des données de sol (Simulation)", "white"),
+            ("│  recolte       Prévisions de récolte (Simulation)", "white"),
+            ("│", "muted"),
             ("│  date          Date et heure système", "white"),
-            ("│  echo [msg]    Répéter un message", "white"),
             ("│  exit          Fermer la session", "white"),
             ("│", "muted"),
             ("└──────────────────────────────────────────────────────────────┘", "muted"),
@@ -67,21 +98,10 @@ def get_commands():
             ("capteurs IoT pour optimiser vos rendements agricoles.", "white"),
             ("", ""),
         ],
-        "status": [
             ("", ""),
             ("─── État du système ──────────────────────────────────────────", "muted"),
-            ("CPU          ████████░░  78%   NORMAL", "green"),
-            ("Mémoire      ██████░░░░  61%   NORMAL", "green"),
-            ("Réseau       ██████████ 100%   EXCELLENT", "green"),
-            ("Satellite    ██████████ 100%   CONNECTÉ", "green"),
-            ("─── Fermes connectées ───────────────────────────────────────", "muted"),
-            ("Ferme Nord   📍 Yaoundé      EN LIGNE    12 capteurs", "white"),
-            ("Ferme Est    📍 Bertoua      EN LIGNE     8 capteurs", "white"),
-            ("Ferme Ouest  📍 Bafoussam    EN LIGNE    27 capteurs", "white"),
+            ("En attente de la commande status...", "dim"),
             ("", ""),
-            ("[✓] Tous les systèmes opérationnels", "green"),
-            ("", ""),
-        ],
         "meteo": [
             ("", ""),
             ("─── Météo Agricole — Région Centre ──────────────────────────", "muted"),
@@ -133,52 +153,8 @@ def get_commands():
             ("  → Sol adapté pour maïs, tomate, manioc.", "white"),
             ("", ""),
         ],
-        "alerte": [
-            ("", ""),
-            ("─── Alertes Phytosanitaires Actives ─────────────────────────", "muted"),
-            ("", ""),
-            ("[⚠] MODÉRÉ   Chenille légionnaire — Zone Nord (3 km)", "yellow"),
-            ("             Traitement préventif conseillé sous 72h", "dim"),
-            ("", ""),
-            ("[⚠] FAIBLE   Mildiou sur tomate — Conditions favorables", "yellow"),
-            ("             Surveiller l'humidité foliaire", "dim"),
-            ("", ""),
-            ("[✓] Aucune alerte critique en ce moment.", "green"),
-            ("", ""),
-            ("Dernière analyse IA : il y a 18 minutes.", "dim"),
-            ("", ""),
-        ],
-        "recolte": [
-            ("", ""),
-            ("─── Prévisions de Récolte — Saison 2026 ────────────────────", "muted"),
-            ("", ""),
-            ("Culture      Parcelle    Date prévue    Rendement    Confiance", "blue"),
-            ("─────────────────────────────────────────────────────────────", "muted"),
-            ("Maïs         A-12        15 Juin 2026   4.2 t/ha     92%", "green"),
-            ("Tomate       B-03        08 Mai  2026   27 t/ha      88%", "green"),
-            ("Manioc       C-07        Oct.    2026   18 t/ha      85%", "green"),
-            ("Arachide     D-01        20 Juil 2026   1.7 t/ha     79%", "yellow"),
-            ("", ""),
-            ("Revenus projetés : 3 420 000 FCFA  (+12% vs saison précédente)", "white"),
-            ("", ""),
-        ],
-        "capteurs": [
-            ("", ""),
-            ("─── État des Capteurs Terrain ───────────────────────────────", "muted"),
-            ("", ""),
-            ("ID       Type              Batterie   Signal   Statut", "blue"),
-            ("─────────────────────────────────────────────────────────────", "muted"),
-            ("S-001    Humidité sol      █████ 94%  ████ 87%   EN LIGNE", "green"),
-            ("S-002    Température       ████░ 78%  █████100%  EN LIGNE", "green"),
-            ("S-003    NPK sol           ██░░░ 42%  ████  91%  EN LIGNE", "yellow"),
-            ("S-004    Pluviomètre       █████ 88%  ████  83%  EN LIGNE", "green"),
-            ("S-005    CO₂ atmosphérique ███░░ 61%  ███░  72%  EN LIGNE", "green"),
-            ("S-006    Caméra IA         ░░░░░  8%  ████  95%  BATTERIE FAIBLE", "red"),
-            ("S-007    Lux/UV            █████ 99%  █████ 98%  EN LIGNE", "green"),
-            ("", ""),
-            ("[!] S-006 : Remplacer la batterie dans les 24h.", "red"),
-            ("", ""),
-        ],
+        "alerte": [],
+        "capteurs": [],
         "date": [
             ("", ""),
             (datetime.datetime.now().strftime("%A %d %B %Y — %H:%M:%S"), "green"),
@@ -203,11 +179,10 @@ BOOT_LINES = [
     ("║              Système CLI — Version 3.1.0               ║", "dim"),
     ("╚══════════════════════════════════════════════════════════╝", "muted"),
     ("", ""),
-    ("[✓] Moteur IA agricole         opérationnel", "green"),
-    ("[✓] Capteurs terrain           connectés (47 actifs)", "green"),
-    ("[✓] Données météorologiques    temps réel", "green"),
-    ("[✓] Base cultures              35 000+ variétés chargées", "green"),
-    ("[✓] Analyses de sol            disponibles", "green"),
+    ("[✓] Moteur CLI                 opérationnel", "green"),
+    ("[✓] Interface Backend            connectée", "green"),
+    ("[✓] Base cultures              (Simulation locale)", "dim"),
+    ("[✓] Analyses de sol            (Simulation locale)", "dim"),
     ("", ""),
     ('Bienvenue dans AgriSmart — Tapez "help" pour commencer.', "blue"),
     ("", ""),
@@ -430,10 +405,93 @@ class AgriSmartApp:
             self.exited = True
             self.entry.config(state="disabled")
             self.root.after(2000, self.root.destroy)
-        elif cmd == "echo":
+        elif cmd == "status":
             self._print("", "")
-            self._print(args or "", "green")
+            self._print("─── État du système (Backend) ──────────────────────────", "muted")
+            
+            # Test backend connection
+            data = api_get("/mesures/derniere")
+            if data is not None:
+                self._print("[✓] Backend API            EN LIGNE", "green")
+                self._print(f"URL: {API_URL}", "dim")
+            else:
+                self._print("[X] Backend API            HORS LIGNE", "red")
+                self._print(f"Impossible de se connecter à {API_URL}", "dim")
             self._print("", "")
+            
+        elif cmd == "capteurs":
+            self._print("", "")
+            self._print("─── Dernières Mesures des Capteurs ────────────────────────", "muted")
+            data = api_get("/mesures/derniere")
+            if data is None:
+                self._print("Erreur de connexion au backend.", "red")
+            elif not data:
+                self._print("Aucune donnée de capteur disponible.", "yellow")
+            else:
+                self._print("Type                Valeur       Date & Heure", "blue")
+                self._print("───────────────────────────────────────────────────────────", "muted")
+                for m in data:
+                    ts = m.get('timestamp', '')[:19].replace('T', ' ')
+                    val = f"{m.get('valeur', 0):.1f}"
+                    typ = m.get('type_mesure', 'inconnu').ljust(18)
+                    self._print(f"{typ} {val.ljust(12)} {ts}", "green")
+            self._print("", "")
+            
+        elif cmd == "alerte" or cmd == "alertes":
+            self._print("", "")
+            self._print("─── Alertes Actives ───────────────────────────────────────", "muted")
+            data = api_get("/alertes?non_resolues=true")
+            if data is None:
+                self._print("Erreur de connexion au backend.", "red")
+            elif not data:
+                self._print("[✓] Aucune alerte non résolue en ce moment.", "green")
+            else:
+                for a in data:
+                    ts = a.get('timestamp', '')[:19].replace('T', ' ')
+                    msg = a.get('message', '')
+                    self._print(f"[⚠] {ts} - {msg}", "red")
+            self._print("", "")
+
+        elif cmd == "actionneurs":
+            self._print("", "")
+            self._print("─── État des Actionneurs ──────────────────────────────────", "muted")
+            data = api_get("/actionneurs")
+            if data is None:
+                self._print("Erreur de connexion au backend.", "red")
+            elif not data:
+                self._print("Aucun actionneur enregistré.", "yellow")
+            else:
+                self._print("Nom                 État       Source", "blue")
+                self._print("───────────────────────────────────────────────────────────", "muted")
+                for a in data:
+                    nom = a.get('actionneur', '').ljust(18)
+                    etat = "ON " if a.get('commande') else "OFF"
+                    color = "green" if a.get('commande') else "dim"
+                    src = a.get('source', '')
+                    self._print(f"{nom} {etat.ljust(10)} {src}", color)
+            self._print("", "")
+
+        elif cmd == "on" or cmd == "off":
+            if not args:
+                self._print("Spécifiez un actionneur. Ex: on pompe", "red")
+            else:
+                actuator = args.lower()
+                state = True if cmd == "on" else False
+                self._print(f"Envoi de la commande {cmd.upper()} à l'actionneur {actuator}...", "dim")
+                res = api_post("/actionneurs/controle", {
+                    "actionneur": actuator,
+                    "commande": state,
+                    "source": "CLI",
+                    "user_id": 1
+                })
+                if res is None:
+                    self._print("Erreur de connexion au backend.", "red")
+                elif "detail" in res and res.get("detail"):
+                    self._print(f"Erreur: {res['detail']}", "red")
+                else:
+                    self._print(f"[✓] Commande {cmd.upper()} envoyée avec succès via MQTT.", "green")
+            self._print("", "")
+
         elif cmd in commands:
             self._print_lines(commands[cmd])
         else:

@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Dashboard from './pages/Dashboard.jsx';
 import Login from './pages/LoginPage.jsx';
 import Actionneurs from './pages/Actionneurs.jsx';
 import Seuils from './pages/Seuils.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import { useUser } from './context/UserContext.jsx';
+import Historique from './pages/Historiques.jsx';
+import Parametres from './pages/Parametres.jsx';
+import Utilisateurs from './pages/Utilisateurs.jsx';
 
 function App() {
   const location = useLocation();
@@ -56,10 +59,13 @@ function App() {
       )}
       <div className={`app-content ${showSidebar ? "main-wrapper" : "auth-wrapper"}`}>
         <Routes>
-          <Route path="/" element={isAuth ? <Navigate to="/dashboard" /> : <Login onLogin={() => {}} />} />
+          <Route path="/" element={isAuth ? <Navigate to="/dashboard" /> : <Login />} />
           <Route path="/dashboard" element={isAuth ? <Dashboard /> : <Navigate to="/" />} />
           <Route path="/actionneurs" element={isAuth ? <Actionneurs /> : <Navigate to="/" />} />
           <Route path="/seuils" element={isAuth ? <Seuils /> : <Navigate to="/" />} />
+          <Route path="/historique" element={isAuth ? <Historique /> : <Navigate to="/" />} />
+          <Route path="/parametres" element={isAuth ? <Parametres /> : <Navigate to="/" />} />
+          <Route path="/utilisateurs" element={isAuth ? <Utilisateurs /> : <Navigate to="/" />} />
         </Routes>
       </div>
     </>

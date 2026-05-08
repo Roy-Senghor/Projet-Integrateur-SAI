@@ -145,6 +145,54 @@
   margin-top: 20px;
 }
 
+/* Power button design */
+.power-btn {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  flex-shrink: 0 !important;
+  position: relative !important;
+}
+
+.power-btn.on {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4) !important;
+}
+
+.power-btn.off {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+  color: #64748b !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+.power-btn:hover {
+  transform: scale(1.05) !important;
+}
+
+.power-btn.on:hover {
+  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.5) !important;
+}
+
+.power-btn.off:hover {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%) !important;
+  color: #475569 !important;
+}
+
+.power-btn:active {
+  transform: scale(0.95) !important;
+}
+
+.power-btn svg {
+  pointer-events: none !important;
+}
+
 /* Toggle switch design - Note: .toggle is also in dashboard.css */
 .toggle {
   position: relative;

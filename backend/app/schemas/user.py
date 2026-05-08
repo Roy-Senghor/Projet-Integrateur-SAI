@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
+from typing import Optional
 from app.models.user import RoleEnum
  
  
@@ -10,10 +11,18 @@ class UserCreate(BaseModel):
     role: RoleEnum = RoleEnum.consultation
  
  
+class UserUpdate(BaseModel):
+    nom: Optional[str] = None
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
+    role: Optional[RoleEnum] = None
+    is_active: Optional[bool] = None
+ 
+ 
 class UserOut(BaseModel):
     id: int
     nom: str
-    email: EmailStr
+    email: str
     role: RoleEnum
     is_active: bool
     created_at: datetime

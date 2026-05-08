@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
+from datetime import datetime, timedelta
 from app.core.database import get_db
 from app.core.security import get_current_user
 from app.models.mesure import Mesure
@@ -68,3 +69,42 @@ def derniere_mesure_par_capteur(db: Session = Depends(get_db), _user=Depends(get
         .join(subq, (Mesure.type_mesure == subq.c.type_mesure) & (Mesure.timestamp == subq.c.max_ts))
         .all()
     )
+
+
+@router.get("/historique/{hours}")
+def get_historical_data(
+    hours: int,
+    type_mesure: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    _user=Depends(get_current_user),
+):
+    """Récupère les données historiques pour les N dernières heures"""
+    since = datetime.utcnow() - timedelta(hours=hours)
+    
+    q = db.query(Mesure).filter(Mesure.timestamp >= since)
+    if type_mesure:
+        q = q.filter(Mesure.type_mesure == type_mesure)
+    
+    mesures = q.order_by(Mesure.timestamp.asc()).all()
+    
+    # Grouper par heure pour les graphiques
+    result = {}
+    for mesure in mesures:
+        hour_key = mesure.timestamp.strftime('%H:00')
+        if mesure.type_mesure not in result:
+            result[mesure.type_mesure] = {}
+        if hour_key not in result[mesure.type_mesure]:
+            result[mesure.type_mesure][hour_key] = []
+        result[mesure.type_mesure][hour_key].append(mesure.valeur)
+    
+    # Calculer la moyenne par heure
+    averaged_data = {}
+    for sensor_type, hourly_data in result.items():
+        averaged_data[sensor_type] = []
+        for hour in range(hours):
+            hour_key = f"{hour:02d}:00"
+            values = hourly_data.get(hour_key, [])
+            avg_value = sum(values) / len(values) if values else None
+            averaged_data[sensor_type].append(avg_value)
+    
+    return averaged_data

@@ -21,10 +21,12 @@ export const UserProvider = ({ children }) => {
       setUser(data);
     } catch (err) {
       console.error("Failed to fetch user:", err);
-      // If token is invalid or server error, clear user
+      // If token is invalid or server error, clear user and token
       setUser(null);
-      if (err.response?.status === 401) {
-        localStorage.removeItem('token');
+      localStorage.removeItem('token');
+      // Redirect to login if not already there
+      if (window.location.pathname !== '/' && err.response?.status === 401) {
+        window.location.href = '/';
       }
     } finally {
       setLoading(false);
